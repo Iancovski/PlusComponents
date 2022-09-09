@@ -14,8 +14,8 @@ type
   private
     FLabelAlignment: TLabelAlignment;
     FMasterLabel: TPLabel;
-    procedure SetMasterLabel(const Value: TPLabel);
     procedure SetLabelAlignment(const Value: TLabelAlignment);
+    procedure SetMasterLabel(const Value: TPLabel);
 
   protected
     SettingMasterAlignment: Boolean;
@@ -60,6 +60,9 @@ constructor TPLabel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
+  SettingMasterAlignment := False;
+  FLabelAlignment := laLeft;
+
   if Owner is TPEdit then begin
     Name := 'SubLabel';
     SetSubComponent(True);
@@ -93,26 +96,34 @@ procedure TPLabel.SetLabelAlignment(const Value: TLabelAlignment);
 begin
   FLabelAlignment := Value;
 
-  SettingMasterAlignment := True;
   if Assigned(MasterLabel) then begin
-    case FLabelAlignment of
-      laTop:
-        Self.Top := MasterLabel.Top;
-      laLeft:
-        Self.Left := MasterLabel.Left;
-      laRight:
-        Self.Left := (MasterLabel.Left + MasterLabel.Width) - Self.Width;
-      laCenter:
-        Self.Left := (MasterLabel.Left + MasterLabel.Width div 2) - (Self.Width div 2);
+    SettingMasterAlignment := True;
+    try
+      case FLabelAlignment of
+        laTop:
+          Self.Top := MasterLabel.Top;
+        laLeft:
+          Self.Left := MasterLabel.Left;
+        laRight:
+          Self.Left := (MasterLabel.Left + MasterLabel.Width) - Self.Width;
+        laCenter:
+          Self.Left := (MasterLabel.Left + MasterLabel.Width div 2) - (Self.Width div 2);
+      end;
+    finally
+      SettingMasterAlignment := False;
     end;
   end;
-  SettingMasterAlignment := False;
 end;
 
 procedure TPLabel.SetMasterLabel(const Value: TPLabel);
 begin
   if (Value <> nil) and (Self.Owner <> Value.Owner) then begin
     ShowMessage('It is not allowed to set a MasterLabel of another Owner.');
+    Abort;
+  end;
+
+  if (Value <> nil) and (Value = Self) then begin
+    ShowMessage('The MasterLabel cannot be the label itself.');
     Abort;
   end;
 

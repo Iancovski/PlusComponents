@@ -14,20 +14,23 @@ type
 
   private
     FEditLabel: TPLabel;
+    FLabeled: Boolean;
     FLabelPosition: TLabelPosition;
     FLabelSpacing: Integer;
+    procedure SetLabeled(const Value: Boolean);
 
   protected
     function AdjustedAlignment(RightToLeftAlignment: Boolean; Alignment: TAlignment): TAlignment;
-    procedure SetParent(AParent: TWinControl); override;
+    procedure CMBidimodechanged(var Message: TMessage); message CM_BIDIMODECHANGED;
+    procedure CMEnabledchanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    procedure CMVisiblechanged(var Message: TMessage); message CM_VISIBLECHANGED;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure SetName(const Value: TComponentName); override;
-    procedure CMVisiblechanged(var Message: TMessage); message CM_VISIBLECHANGED;
-    procedure CMEnabledchanged(var Message: TMessage); message CM_ENABLEDCHANGED;
-    procedure CMBidimodechanged(var Message: TMessage); message CM_BIDIMODECHANGED;
+    procedure SetParent(AParent: TWinControl); override;
 
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
     procedure SetLabelPosition(const Value: TLabelPosition);
     procedure SetLabelSpacing(const Value: Integer);
@@ -35,8 +38,10 @@ type
 
   published
     property EditLabel: TPLabel read FEditLabel;
+    property Labeled: Boolean read FLabeled write SetLabeled default False;
     property LabelPosition: TLabelPosition read FLabelPosition write SetLabelPosition default lpAbove;
     property LabelSpacing: Integer read FLabelSpacing write SetLabelSpacing default 3;
+
   end;
 
 procedure Register;
@@ -94,7 +99,17 @@ begin
 
   FLabelPosition := lpAbove;
   FLabelSpacing := 3;
-  SetupInternalLabel;
+
+  if FLabeled then
+    SetupInternalLabel;
+end;
+
+destructor TPEdit.Destroy;
+begin
+  if Assigned(FEditLabel) then
+    FEditLabel.Free;
+
+  inherited;
 end;
 
 procedure TPEdit.Notification(AComponent: TComponent; Operation: TOperation);
@@ -110,6 +125,16 @@ begin
   inherited SetBounds(ALeft, ATop, AWidth, AHeight);
 
   SetLabelPosition(FLabelPosition);
+end;
+
+procedure TPEdit.SetLabeled(const Value: Boolean);
+begin
+  FLabeled := Value;
+
+  if FLabeled then
+    SetupInternalLabel
+  else if Assigned(FEditLabel) then
+    FEditLabel.Free;
 end;
 
 procedure TPEdit.SetLabelPosition(const Value: TLabelPosition);
@@ -190,6 +215,11 @@ begin
   FEditLabel := TPLabel.Create(Self);
   FEditLabel.FreeNotification(Self);
   FEditLabel.FocusControl := Self;
+
+  if not Assigned(FEditLabel.Parent) and Assigned(Self.Parent) then
+    FEditLabel.Parent := Self.Parent;
+
+  SetLabelPosition(FLabelPosition);
 end;
 
 end.
