@@ -29,6 +29,7 @@ type
   published
     property MasterAlignment: TLabelAlignment read FLabelAlignment write SetLabelAlignment default laLeft;
     property MasterLabel: TPLabel read FMasterLabel write SetMasterLabel;
+
   end;
 
 procedure Register;
@@ -40,7 +41,7 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components', [TPLabel]);
+  RegisterComponents('Plus Components | Standard', [TPLabel]);
 end;
 
 { TPLabel }

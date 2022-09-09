@@ -23,7 +23,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components', [TPButton]);
+  RegisterComponents('Plus Components | Standard', [TPButton]);
 end;
 
 end.

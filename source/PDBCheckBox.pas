@@ -23,7 +23,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components', [TPDBCheckBox]);
+  RegisterComponents('Plus Components | Data Controls', [TPDBCheckBox]);
 end;
 
 end.

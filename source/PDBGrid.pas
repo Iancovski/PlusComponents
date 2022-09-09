@@ -23,7 +23,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components', [TPDBGrid]);
+  RegisterComponents('Plus Components | Data Controls', [TPDBGrid]);
 end;
 
 end.

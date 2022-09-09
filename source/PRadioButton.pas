@@ -49,7 +49,7 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components', [TPRadioButton]);
+  RegisterComponents('Plus Components | Standard', [TPRadioButton]);
 end;
 
 { TPRadioButton }

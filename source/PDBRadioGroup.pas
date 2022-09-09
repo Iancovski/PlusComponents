@@ -23,7 +23,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components', [TPDBRadioGroup]);
+  RegisterComponents('Plus Components | Data Controls', [TPDBRadioGroup]);
 end;
 
 end.

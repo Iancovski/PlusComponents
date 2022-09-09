@@ -23,7 +23,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components', [TPComboBox]);
+  RegisterComponents('Plus Components | Standard', [TPComboBox]);
 end;
 
 end.

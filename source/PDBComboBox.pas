@@ -23,7 +23,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components', [TPDBComboBox]);
+  RegisterComponents('Plus Components | Data Controls', [TPDBComboBox]);
 end;
 
 end.
