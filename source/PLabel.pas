@@ -41,7 +41,7 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components | Standard', [TPLabel]);
+  RegisterComponents('Plus Components - Standard', [TPLabel]);
 end;
 
 { TPLabel }

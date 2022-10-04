@@ -34,7 +34,11 @@ requires
   dbrtl,
   vclwinx,
   vclimg,
-  bindengine;
+  bindengine,
+  FireDAC,
+  FireDACCommonDriver,
+  FireDACCommon,
+  xmlrtl;
 
 contains
   PEdit in '..\source\PEdit.pas',
@@ -48,6 +52,8 @@ contains
   PRadioGroup in '..\source\PRadioGroup.pas',
   PDBRadioGroup in '..\source\PDBRadioGroup.pas',
   PRadioButton in '..\source\PRadioButton.pas',
-  PDBGrid in '..\source\PDBGrid.pas';
+  PDBGrid in '..\source\PDBGrid.pas',
+  PFDQuery in '..\source\PFDQuery.pas',
+  PGroupBox in '..\source\PGroupBox.pas';
 
 end.

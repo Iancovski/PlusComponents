@@ -23,7 +23,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components | Standard', [TPRadioGroup]);
+  RegisterComponents('Plus Components - Standard', [TPRadioGroup]);
 end;
 
 end.

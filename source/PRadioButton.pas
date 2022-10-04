@@ -26,6 +26,7 @@ type
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure SetName(const Value: TComponentName); override;
     procedure SetParent(AParent: TWinControl); override;
+    function GetRadioButtonSize: Word;
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -49,7 +50,7 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components | Standard', [TPRadioButton]);
+  RegisterComponents('Plus Components - Standard', [TPRadioButton]);
 end;
 
 { TPRadioButton }
@@ -101,7 +102,7 @@ begin
   inherited Create(AOwner);
 
   ControlStyle := [csDoubleClicks];
-  Height := 17;
+  Height := GetRadioButtonSize();
   FLabelSpacing := 3;
   SettingLabelPosition := False;
   SetupInternalLabel;
@@ -115,6 +116,16 @@ begin
   inherited;
 end;
 
+function TPRadioButton.GetRadioButtonSize: Word;
+begin
+  case Self.CurrentPPI of
+    96: Result := 17;
+    120: Result := 20;
+    else
+      Result := 24;
+  end;
+end;
+
 procedure TPRadioButton.Notification(AComponent: TComponent; Operation: TOperation);
 begin
   inherited Notification(AComponent, Operation);
@@ -126,8 +137,8 @@ end;
 procedure TPRadioButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 begin
   if Assigned(SubLabel) then begin
-    AWidth := 17 + FLabelSpacing + SubLabel.Width;
-    AHeight := Max(17, SubLabel.Height);
+    AWidth := GetRadioButtonSize() + FLabelSpacing + SubLabel.Width;
+    AHeight := Max(GetRadioButtonSize(), SubLabel.Height);
   end;
 
   inherited SetBounds(ALeft, ATop, AWidth, AHeight);
@@ -152,7 +163,7 @@ begin
 
   SettingLabelPosition := True;
   try
-    P := Point(Left + 17 + FLabelSpacing, Top + ((Height - SubLabel.Height) div 2));
+    P := Point(Left + GetRadioButtonSize() + FLabelSpacing, Top + ((Height - SubLabel.Height) div 2));
     SubLabel.SetBounds(P.x, P.y, SubLabel.Width, SubLabel.Height);
     Self.SetBounds(Left, Top, Width, Height);
   finally

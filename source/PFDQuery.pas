@@ -1,12 +1,12 @@
-unit PDBRadioGroup;
+unit PFDQuery;
 
 interface
 
 uses
-  System.SysUtils, System.Classes, Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.DBCtrls;
+  System.SysUtils, System.Classes, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 type
-  TPDBRadioGroup = class(TDBRadioGroup)
+  TPFDQuery = class(TFDQuery)
   private
     { Private declarations }
   protected
@@ -23,7 +23,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components - Data Controls', [TPDBRadioGroup]);
+  RegisterComponents('Plus Components - FireDAC', [TPFDQuery]);
 end;
 
 end.

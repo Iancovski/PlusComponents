@@ -50,7 +50,7 @@ implementation
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components | Standard', [TPEdit]);
+  RegisterComponents('Plus Components - Standard', [TPEdit]);
 end;
 
 { TPEdit }

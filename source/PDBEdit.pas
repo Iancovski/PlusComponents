@@ -53,7 +53,7 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components | Data Controls', [TPDBEdit]);
+  RegisterComponents('Plus Components - Data Controls', [TPDBEdit]);
 end;
 
 { TPDBEdit }

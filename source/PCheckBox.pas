@@ -49,7 +49,7 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents('Plus Components | Standard', [TPCheckBox]);
+  RegisterComponents('Plus Components - Standard', [TPCheckBox]);
 end;
 
 { TPCheckBox }
