@@ -148,7 +148,7 @@ begin
     Abort;
   end;
 
-  if IsEditLabel() then begin
+  if (Value <> nil) and IsEditLabel() then begin
     ShowMessage('The label belongs to an Edit and cannot have a MasterLabel.');
     Abort;
   end;
