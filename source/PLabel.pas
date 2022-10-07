@@ -24,6 +24,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    function IsEditLabel: Boolean;
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
 
   published
@@ -37,7 +38,7 @@ procedure Register;
 implementation
 
 uses
-  PEdit;
+  PEdit, PDBEdit;
 
 procedure Register;
 begin
@@ -63,12 +64,6 @@ begin
 
   SettingMasterAlignment := False;
   FLabelAlignment := laLeft;
-
-  if Owner is TPEdit then begin
-    Name := 'SubLabel';
-    SetSubComponent(True);
-    Caption := AOwner.Name;
-  end;
 end;
 
 destructor TPLabel.Destroy;
@@ -77,12 +72,37 @@ var
 begin
   for i := 0 to Owner.ComponentCount - 1 do begin
     if (Owner.Components[i] is TPLabel) then begin
-      if (Assigned(TPLabel(Owner.Components[i]).MasterLabel)) and (TPLabel(Owner.Components[i]).MasterLabel = Self) then
+      if Assigned(TPLabel(Owner.Components[i]).MasterLabel) and (TPLabel(Owner.Components[i]).MasterLabel = Self) then
         TPLabel(Owner.Components[i]).MasterLabel := nil;
+    end
+    else if (Owner.Components[i] is TPEdit) then begin
+      if Assigned(TPEdit(Owner.Components[i]).EditLabel) and (TPEdit(Owner.Components[i]).EditLabel = Self) then
+        TPEdit(Owner.Components[i]).EditLabel := nil;
+    end
+    else if (Owner.Components[i] is TPDBEdit) then begin
+      if Assigned(TPDBEdit(Owner.Components[i]).EditLabel) and (TPDBEdit(Owner.Components[i]).EditLabel = Self) then
+        TPDBEdit(Owner.Components[i]).EditLabel := nil;
     end;
   end;
 
   inherited;
+end;
+
+function TPLabel.IsEditLabel: Boolean;
+var
+  i: Integer;
+begin
+  Result := False;
+
+  for i := 0 to Owner.ComponentCount - 1 do begin
+    if ((Owner.Components[i] is TPEdit) and (Assigned(TPEdit(Owner.Components[i]).EditLabel)) and
+      (TPEdit(Owner.Components[i]).EditLabel = Self)) or //
+      ((Owner.Components[i] is TPDBEdit) and (Assigned(TPDBEdit(Owner.Components[i]).EditLabel)) and
+      (TPDBEdit(Owner.Components[i]).EditLabel = Self)) then begin
+      Result := True;
+      Break;
+    end;
+  end;
 end;
 
 procedure TPLabel.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
@@ -125,6 +145,11 @@ begin
 
   if (Value <> nil) and (Value = Self) then begin
     ShowMessage('The MasterLabel cannot be the label itself.');
+    Abort;
+  end;
+
+  if IsEditLabel() then begin
+    ShowMessage('The label belongs to an Edit and cannot have a MasterLabel.');
     Abort;
   end;
 

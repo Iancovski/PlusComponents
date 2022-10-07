@@ -3,8 +3,8 @@ unit PDBEdit;
 interface
 
 uses
-  System.SysUtils, System.Classes, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
-  PLabel, Winapi.Messages;
+  System.SysUtils, System.Classes, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Dialogs,
+  Winapi.Messages, Winapi.Windows, PLabel;
 
 type
   TLabelPosition = (lpAbove, lpBelow, lpLeft, lpRight);
@@ -14,17 +14,15 @@ type
 
   private
     FEditLabel: TPLabel;
-    FLabeled: Boolean;
     FLabelPosition: TLabelPosition;
     FLabelSpacing: Integer;
-    procedure SetLabeled(const Value: Boolean);
+    procedure SetEditLabel(const Value: TPLabel);
 
   protected
     function AdjustedAlignment(RightToLeftAlignment: Boolean; Alignment: TAlignment): TAlignment;
     procedure CMBidimodechanged(var Message: TMessage); message CM_BIDIMODECHANGED;
     procedure CMEnabledchanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     procedure CMVisiblechanged(var Message: TMessage); message CM_VISIBLECHANGED;
-    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure SetName(const Value: TComponentName); override;
     procedure SetParent(AParent: TWinControl); override;
 
@@ -34,11 +32,9 @@ type
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
     procedure SetLabelPosition(const Value: TLabelPosition);
     procedure SetLabelSpacing(const Value: Integer);
-    procedure SetupInternalLabel;
 
   published
-    property EditLabel: TPLabel read FEditLabel;
-    property Labeled: Boolean read FLabeled write SetLabeled default False;
+    property EditLabel: TPLabel read FEditLabel write SetEditLabel;
     property LabelPosition: TLabelPosition read FLabelPosition write SetLabelPosition default lpAbove;
     property LabelSpacing: Integer read FLabelSpacing write SetLabelSpacing default 3;
 
@@ -47,9 +43,6 @@ type
 procedure Register;
 
 implementation
-
-uses
-  Winapi.Windows;
 
 procedure Register;
 begin
@@ -76,7 +69,7 @@ procedure TPDBEdit.CMBidimodechanged(var Message: TMessage);
 begin
   inherited;
 
-  if FEditLabel <> nil then
+  if Assigned(FEditLabel) then
     FEditLabel.BiDiMode := BiDiMode;
 end;
 
@@ -84,7 +77,7 @@ procedure TPDBEdit.CMEnabledchanged(var Message: TMessage);
 begin
   inherited;
 
-  if FEditLabel <> nil then
+  if Assigned(FEditLabel) then
     FEditLabel.Enabled := Enabled;
 end;
 
@@ -92,7 +85,7 @@ procedure TPDBEdit.CMVisiblechanged(var Message: TMessage);
 begin
   inherited;
 
-  if FEditLabel <> nil then
+  if Assigned(FEditLabel) then
     FEditLabel.Visible := Visible;
 end;
 
@@ -102,42 +95,37 @@ begin
 
   FLabelPosition := lpAbove;
   FLabelSpacing := 3;
-
-  if FLabeled then
-    SetupInternalLabel;
 end;
 
 destructor TPDBEdit.Destroy;
 begin
   if Assigned(FEditLabel) then
-    FEditLabel.Free;
+    FEditLabel.Destroy;
 
   inherited;
-end;
-
-procedure TPDBEdit.Notification(AComponent: TComponent; Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-
-  if (AComponent = FEditLabel) and (Operation = opRemove) then
-    FEditLabel := nil;
 end;
 
 procedure TPDBEdit.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 begin
   inherited SetBounds(ALeft, ATop, AWidth, AHeight);
 
-  SetLabelPosition(FLabelPosition);
+  if Assigned(FEditLabel) then
+    SetLabelPosition(FLabelPosition);
 end;
 
-procedure TPDBEdit.SetLabeled(const Value: Boolean);
+procedure TPDBEdit.SetEditLabel(const Value: TPLabel);
 begin
-  FLabeled := Value;
+  if (Value <> nil) and (Self.Owner <> Value.Owner) then begin
+    ShowMessage('It is not allowed to set a EditLabel of another Owner.');
+    Abort;
+  end;
 
-  if FLabeled then
-    SetupInternalLabel
-  else if Assigned(FEditLabel) then
-    FEditLabel.Free;
+  FEditLabel := Value;
+
+  if Assigned(FEditLabel) then begin
+    FEditLabel.MasterLabel := nil;
+    SetLabelPosition(FLabelPosition);
+  end;
 end;
 
 procedure TPDBEdit.SetLabelPosition(const Value: TLabelPosition);
@@ -180,49 +168,29 @@ end;
 procedure TPDBEdit.SetLabelSpacing(const Value: Integer);
 begin
   FLabelSpacing := Value;
-  SetLabelPosition(FLabelPosition);
+
+  if Assigned(FEditLabel) then
+    SetLabelPosition(FLabelPosition);
 end;
 
 procedure TPDBEdit.SetName(const Value: TComponentName);
-var
-  LClearText: Boolean;
 begin
-  if (csDesigning in ComponentState) and (FEditLabel <> nil) and
+  if (csDesigning in ComponentState) and Assigned(FEditLabel) and
     ((FEditLabel.GetTextLen = 0) or (CompareText(FEditLabel.Caption, Name) = 0)) then
     FEditLabel.Caption := Value;
 
-  LClearText := (csDesigning in ComponentState) and (Text = '');
-
   inherited SetName(Value);
-
-  if LClearText then
-    Text := '';
 end;
 
 procedure TPDBEdit.SetParent(AParent: TWinControl);
 begin
   inherited SetParent(AParent);
 
-  if FEditLabel = nil then
+  if not Assigned(FEditLabel) then
     Exit;
 
   FEditLabel.Parent := AParent;
   FEditLabel.Visible := True;
-end;
-
-procedure TPDBEdit.SetupInternalLabel;
-begin
-  if Assigned(FEditLabel) then
-    Exit;
-
-  FEditLabel := TPLabel.Create(Self);
-  FEditLabel.FreeNotification(Self);
-  FEditLabel.FocusControl := Self;
-
-  if not Assigned(FEditLabel.Parent) and Assigned(Self.Parent) then
-    FEditLabel.Parent := Self.Parent;
-
-  SetLabelPosition(FLabelPosition);
 end;
 
 end.
