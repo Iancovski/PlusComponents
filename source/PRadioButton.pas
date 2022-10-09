@@ -11,11 +11,9 @@ type
 
   private
     FCaption: String;
-    FLabelSpacing: Integer;
     procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
     procedure CMTextChanged(var Message: TMessage); message CM_TEXTCHANGED;
     procedure SetCaption(const Value: String);
-    procedure SetLabelSpacing(const Value: Integer);
 
   protected
     SettingLabelPosition: Boolean;
@@ -23,7 +21,6 @@ type
     procedure CMBidimodechanged(var Message: TMessage); message CM_BIDIMODECHANGED;
     procedure CMEnabledchanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     procedure CMVisiblechanged(var Message: TMessage); message CM_VISIBLECHANGED;
-    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure SetName(const Value: TComponentName); override;
     procedure SetParent(AParent: TWinControl); override;
     function GetRadioButtonSize: Word;
@@ -37,7 +34,6 @@ type
 
   published
     property Caption: String read FCaption write SetCaption;
-    property LabelSpacing: Integer read FLabelSpacing write SetLabelSpacing default 3;
 
   end;
 
@@ -59,7 +55,7 @@ procedure TPRadioButton.CMBidimodechanged(var Message: TMessage);
 begin
   inherited;
 
-  if SubLabel <> nil then
+  if Assigned(SubLabel) then
     SubLabel.BiDiMode := BiDiMode;
 end;
 
@@ -67,7 +63,7 @@ procedure TPRadioButton.CMEnabledchanged(var Message: TMessage);
 begin
   inherited;
 
-  if SubLabel <> nil then
+  if Assigned(SubLabel) then
     SubLabel.Enabled := Enabled;
 end;
 
@@ -75,7 +71,7 @@ procedure TPRadioButton.CMFontChanged(var Message: TMessage);
 begin
   inherited;
 
-  if SubLabel <> nil then
+  if Assigned(SubLabel) then
     SubLabel.Font := Self.Font;
 
   SetLabelPosition;
@@ -85,7 +81,7 @@ procedure TPRadioButton.CMTextChanged(var Message: TMessage);
 begin
   inherited;
 
-  if SubLabel <> nil then
+  if Assigned(SubLabel) then
     SubLabel.Caption := Self.Caption;
 end;
 
@@ -93,7 +89,7 @@ procedure TPRadioButton.CMVisiblechanged(var Message: TMessage);
 begin
   inherited;
 
-  if SubLabel <> nil then
+  if Assigned(SubLabel) then
     SubLabel.Visible := Visible;
 end;
 
@@ -103,7 +99,6 @@ begin
 
   ControlStyle := [csDoubleClicks];
   Height := GetRadioButtonSize();
-  FLabelSpacing := 3;
   SettingLabelPosition := False;
   SetupInternalLabel;
 end;
@@ -119,25 +114,19 @@ end;
 function TPRadioButton.GetRadioButtonSize: Word;
 begin
   case Self.CurrentPPI of
-    96: Result := 17;
-    120: Result := 20;
-    else
-      Result := 24;
+    96:
+      Result := 17;
+    120:
+      Result := 20;
+  else
+    Result := 24;
   end;
-end;
-
-procedure TPRadioButton.Notification(AComponent: TComponent; Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-
-  if (AComponent = SubLabel) and (Operation = opRemove) then
-    SubLabel := nil;
 end;
 
 procedure TPRadioButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 begin
   if Assigned(SubLabel) then begin
-    AWidth := GetRadioButtonSize() + FLabelSpacing + SubLabel.Width;
+    AWidth := GetRadioButtonSize() + SubLabel.Width;
     AHeight := Max(GetRadioButtonSize(), SubLabel.Height);
   end;
 
@@ -163,18 +152,12 @@ begin
 
   SettingLabelPosition := True;
   try
-    P := Point(Left + GetRadioButtonSize() + FLabelSpacing, Top + ((Height - SubLabel.Height) div 2));
+    P := Point(Left + GetRadioButtonSize(), Top + ((Height - SubLabel.Height) div 2));
     SubLabel.SetBounds(P.x, P.y, SubLabel.Width, SubLabel.Height);
     Self.SetBounds(Left, Top, Width, Height);
   finally
     SettingLabelPosition := False;
   end;
-end;
-
-procedure TPRadioButton.SetLabelSpacing(const Value: Integer);
-begin
-  FLabelSpacing := Value;
-  SetLabelPosition;
 end;
 
 procedure TPRadioButton.SetName(const Value: TComponentName);
@@ -190,7 +173,7 @@ procedure TPRadioButton.SetParent(AParent: TWinControl);
 begin
   inherited SetParent(AParent);
 
-  if SubLabel = nil then
+  if not Assigned(SubLabel) then
     Exit;
 
   SubLabel.Parent := AParent;
