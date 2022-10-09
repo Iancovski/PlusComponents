@@ -8,13 +8,10 @@ uses
 type
   TPFDQuery = class(TFDQuery)
   private
-    { Private declarations }
   protected
-    { Protected declarations }
+    procedure DoBeforeInsert; override;
   public
-    { Public declarations }
   published
-    { Published declarations }
   end;
 
 procedure Register;
@@ -24,6 +21,19 @@ implementation
 procedure Register;
 begin
   RegisterComponents('Plus Components - FireDAC', [TPFDQuery]);
+end;
+
+{ TPFDQuery }
+
+procedure TPFDQuery.DoBeforeInsert;
+begin
+  if Assigned(Self.MasterSource) then begin
+    if Self.MasterSource.State in dsEditModes then begin
+      Self.MasterSource.DataSet.Post;
+    end;
+  end;
+
+  inherited;
 end;
 
 end.
