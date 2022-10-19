@@ -38,7 +38,8 @@ requires
   FireDAC,
   FireDACCommonDriver,
   FireDACCommon,
-  xmlrtl;
+  xmlrtl,
+  DesignIDE;
 
 contains
   PEdit in '..\source\PEdit.pas',
@@ -52,8 +53,11 @@ contains
   PRadioGroup in '..\source\PRadioGroup.pas',
   PDBRadioGroup in '..\source\PDBRadioGroup.pas',
   PRadioButton in '..\source\PRadioButton.pas',
-  PDBGrid in '..\source\PDBGrid.pas',
   PFDQuery in '..\source\PFDQuery.pas',
-  PGroupBox in '..\source\PGroupBox.pas';
+  PGroupBox in '..\source\PGroupBox.pas',
+  PDBGridClass in '..\source\classes\PDBGridClass.pas',
+  PDBGrid in '..\source\PDBGrid.pas',
+  PDBColnEd in '..\source\editors\PDBColnEd.pas',
+  PVclDBReg in '..\source\editors\PVclDBReg.pas';
 
 end.

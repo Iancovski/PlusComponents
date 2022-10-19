@@ -96,6 +96,7 @@
         <DCCReference Include="FireDACCommonDriver.dcp"/>
         <DCCReference Include="FireDACCommon.dcp"/>
         <DCCReference Include="xmlrtl.dcp"/>
+        <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="..\source\PEdit.pas"/>
         <DCCReference Include="..\source\PDBEdit.pas"/>
         <DCCReference Include="..\source\PLabel.pas"/>
@@ -107,9 +108,12 @@
         <DCCReference Include="..\source\PRadioGroup.pas"/>
         <DCCReference Include="..\source\PDBRadioGroup.pas"/>
         <DCCReference Include="..\source\PRadioButton.pas"/>
-        <DCCReference Include="..\source\PDBGrid.pas"/>
         <DCCReference Include="..\source\PFDQuery.pas"/>
         <DCCReference Include="..\source\PGroupBox.pas"/>
+        <DCCReference Include="..\source\classes\PDBGridClass.pas"/>
+        <DCCReference Include="..\source\PDBGrid.pas"/>
+        <DCCReference Include="..\source\editors\PDBColnEd.pas"/>
+        <DCCReference Include="..\source\editors\PVclDBReg.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
