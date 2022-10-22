@@ -19,7 +19,7 @@ uses
   Windows, SysUtils, Classes, System.Actions, Controls, Forms, Mask, TypInfo, DB,
   DesignIntf, DesignEditors, DBConsts,
   ColnEdit, ActnList, PDBColnEd,
-  DBCtrls, DBGrids, DBCGrids, DBActns,
+  DBCtrls, DBCGrids, DBActns,
   FileCtrl, ActiveX, DBOleCtl, PDBGrid;
 
 { TDBGridEditor }
@@ -40,7 +40,7 @@ end;
 
 function TDBGridEditor.GetVerb(Index: Integer): string;
 begin
-  Result := 'Column Editor';
+  Result := 'Columns Editor';
 end;
 
 function TDBGridEditor.GetVerbCount: Integer;

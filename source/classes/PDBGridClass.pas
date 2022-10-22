@@ -93,15 +93,18 @@ type
   TCheckBoxValue = (cvChecked, cvUnchecked);
 
   { PlusComponents }
-  TCheckBoxValues = class(TObject)
+  TCheckBoxValues = class(TPersistent)
   private
     FNullValue: TCheckBoxValue;
     FCheckedValue: Variant;
     FUncheckedValue: Variant;
+    procedure SetCheckedValue(const Value: Variant);
+    procedure SetNullValue(const Value: TCheckBoxValue);
+    procedure SetUnheckedValue(const Value: Variant);
   published
-    property CheckedValue: Variant read FCheckedValue write FCheckedValue;
-    property NullValue: TCheckBoxValue read FNullValue write FNullValue default cvUnchecked;
-    property UncheckedValue: Variant read FUncheckedValue write FUncheckedValue;
+    property CheckedValue: Variant read FCheckedValue write SetCheckedValue;
+    property NullValue: TCheckBoxValue read FNullValue write SetNullValue default cvUnchecked;
+    property UncheckedValue: Variant read FUncheckedValue write SetUnheckedValue;
   end;
 
   TColumn = class(TCollectionItem)
@@ -222,7 +225,7 @@ type
     property  Visible: Boolean read GetVisible write SetVisible;
 
     { PlusComponents }
-    property CheckBox: Boolean read FCheckBox write SetCheckBox stored False default False;
+    property CheckBox: Boolean read FCheckBox write SetCheckBox default False;
     property CheckBoxValues: TCheckBoxValues read FCheckBoxValues write SetCheckBoxValues;
   end;
 
@@ -1154,8 +1157,9 @@ begin
     FStored := True;
 
     { PlusComponents }
-    CheckBoxValues := TCheckBoxValues.Create;
-    CheckBoxValues.FNullValue := cvUnchecked;
+    FCheckBox := False;
+    FCheckBoxValues := TCheckBoxValues.Create;
+    FCheckBoxValues.FNullValue := cvUnchecked;
   finally
     if Assigned(Grid) then Grid.EndLayout;
   end;
@@ -2957,12 +2961,17 @@ begin
       OldActive := FDataLink.ActiveRecord;
       try
         FDataLink.ActiveRecord := ARow;
-        if Assigned(DrawColumn.Field) then
-          Value := DrawColumn.Field.DisplayText;
-        if HighlightCell(ACol, ARow, Value, AState) and DefaultDrawing then
-          DrawCellHighlight(ARect, AState, ACol, ARow);
-        if not Enabled then
-          Font.Color := clGrayText;
+
+        { PlusComponents }
+        if not DrawColumn.CheckBox then begin
+          if Assigned(DrawColumn.Field) then
+            Value := DrawColumn.Field.DisplayText;
+          if HighlightCell(ACol, ARow, Value, AState) and DefaultDrawing then
+            DrawCellHighlight(ARect, AState, ACol, ARow);
+          if not Enabled then
+            Font.Color := clGrayText;
+        end;
+
         if FDefaultDrawing then
           WriteText(Canvas, ARect, 3, 2, Value, DrawColumn.Alignment,
             UseRightToLeftAlignmentForField(DrawColumn.Field, DrawColumn.Alignment));
@@ -4568,6 +4577,23 @@ procedure TCustomPDBGrid.TopLeftChanged;
 begin
   InvalidateTitles;
   inherited TopLeftChanged;
+end;
+
+{ TCheckBoxValues }
+
+procedure TCheckBoxValues.SetCheckedValue(const Value: Variant);
+begin
+  FCheckedValue := Value;
+end;
+
+procedure TCheckBoxValues.SetNullValue(const Value: TCheckBoxValue);
+begin
+  FNullValue := Value;
+end;
+
+procedure TCheckBoxValues.SetUnheckedValue(const Value: Variant);
+begin
+  FUncheckedValue := Value;
 end;
 
 end.
