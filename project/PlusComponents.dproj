@@ -114,6 +114,7 @@
         <DCCReference Include="..\source\PDBGrid.pas"/>
         <DCCReference Include="..\source\editors\PDBColnEd.pas"/>
         <DCCReference Include="..\source\editors\PVclDBReg.pas"/>
+        <DCCReference Include="..\source\PFormPage.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

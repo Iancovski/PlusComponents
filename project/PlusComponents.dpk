@@ -58,6 +58,7 @@ contains
   PDBGridClass in '..\source\classes\PDBGridClass.pas',
   PDBGrid in '..\source\PDBGrid.pas',
   PDBColnEd in '..\source\editors\PDBColnEd.pas',
-  PVclDBReg in '..\source\editors\PVclDBReg.pas';
+  PVclDBReg in '..\source\editors\PVclDBReg.pas',
+  PFormPage in '..\source\PFormPage.pas';
 
 end.
